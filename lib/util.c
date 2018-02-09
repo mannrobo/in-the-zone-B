@@ -4,7 +4,7 @@
 
 #pragma systemFile
 
-#define arraySize(a) (sizeof(a)/sizeof[a])
+#define arraySize(a) (sizeof(a)/sizeof(a[0]))
 #define PI 3.1415926535
 
 /**
