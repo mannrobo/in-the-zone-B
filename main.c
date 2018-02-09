@@ -36,7 +36,6 @@
 #include "routines\auton.c"
 #include "routines\skills.c"
 
-
 void pre_auton() {
   bStopTasksBetweenModes = false;
   robotConfigure();

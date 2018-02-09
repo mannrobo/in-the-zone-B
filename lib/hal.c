@@ -44,7 +44,6 @@ void driveDistance(int inches) {
     while(SensorValue[leftDrive] != targetTicks || SensorValue[rightDrive] != targetTicks) {
         int syncspeed = pidCalculate(drivePID, driveOffset());
         drive(80 - syncspeed, 80 + syncspeed);
-
     }
 
     // Stop the drive after we've completed the distance
