@@ -41,35 +41,36 @@ int lcdPick(int line, char * leftOption, char * rightOption) {
 }
 
 
-// Basic Definition of a String, used to pass to functions
-typedef struct {
-   string value;
-} String;
-
 /**
  * UI Component: Pick between multiple options
  * @param int line The line to display on
  * @param string options The options to choose from, split by commas
  * @return int The index of the choosen option
  **/
-void lcdMenu(int line, char * options) {
-    int choice = 0;
+void lcdMenu(int line, string * options, int size) {
+	int choice = 0;
 
-    while(nLCDButtons != 2) {
-        if (nLCDButtons == 1 && choice > 0) choice--;
-        if (nLCDButtons == 4 && choice < 16) choice++;
+	int prev_choice = choice;
+	while(1) {
+		if (nLCDButtons == kButtonLeft && choice > 0) {
+			choice--;
+		}
+		if (nLCDButtons == kButtonRight && choice < size - 1) {
+			choice++;
+		}
+		if (nLCDButtons == kButtonCenter) {
+			break;
+		}
+		string buffer = (string) options[choice];
 
-        if(nLCDButtons != 0) clearLCDLine(1);
+		if(prev_choice != choice) {
+            displayLCDChar(line, 1, '<');
+            displayLCDChar(line, 14, '>');
+			displayLCDCenteredString(line, buffer);
+		}
 
-        // Display control icons
-        displayLCDChar(1, 1, '<');
-        displayLCDChar(1, 14, '>');
-
-
-		wait1Msec(100);
-
-    }
-
+		prev_choice = choice;
+	}
 }
 
 /**
@@ -86,7 +87,8 @@ void robotConfigure() {
     lcdClear();
 
     displayLCDCenteredString(0, "Match Type");
-    match.type = lcdMenu(1, "Standard,Driver,Prog,Rerun");
+    string matchTypes[] = { "Standard", "Driver", "Prog", "Rerun" };
+    match.type = lcdMenu(1, matchTypes, 4);
 
     wait1Msec(500);
     lcdClear();
@@ -104,11 +106,15 @@ void robotConfigure() {
     // Menu Tree based on Match Type
     switch(match.type) {
         case 0:
-            match.routine = lcdMenu(1, "Mogo");
+            string autons[] = { "Mogo", "Blcok" };
+            match.routine = lcdMenu(1, autons, 2);
             break;
         case 2:
-            match.routine = lcdMenu(1, "Standard");
+            string skillsRoutines[] = { "Standard" };
+            match.routine = lcdMenu(1, skillsRoutines, 1);
             break;
         default: break;
     }
+
+
 }
