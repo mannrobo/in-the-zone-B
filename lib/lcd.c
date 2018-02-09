@@ -49,16 +49,15 @@ typedef struct {
 /**
  * UI Component: Pick between multiple options
  * @param int line The line to display on
- * @param String * options The array of options. Construct with String options = {"Option 1", "Option 2"}
- * @param int arrayLength The total number of options
+ * @param string options The options to choose from, split by commas
  * @return int The index of the choosen option
  **/
-void lcdMenu(int line, String * options, int arrayLength) {
+void lcdMenu(int line, char * options) {
     int choice = 0;
 
     while(nLCDButtons != 2) {
         if (nLCDButtons == 1 && choice > 0) choice--;
-        if (nLCDButtons == 4 && choice < arrayLength) choice++; // sizeof() returns byte size, 20 bytes is a string
+        if (nLCDButtons == 4 && choice < 16) choice++;
 
         if(nLCDButtons != 0) clearLCDLine(1);
 
@@ -66,7 +65,6 @@ void lcdMenu(int line, String * options, int arrayLength) {
         displayLCDChar(1, 1, '<');
         displayLCDChar(1, 14, '>');
 
-        displayLCDString(1, 3, options[choice].value);
 
 		wait1Msec(100);
 
@@ -87,9 +85,8 @@ void robotConfigure() {
     wait1Msec(500);
     lcdClear();
 
-    String matchTypes[4] = { "Standard", "Driver", "Prog", "Rerun" };
     displayLCDCenteredString(0, "Match Type");
-    match.type = lcdMenu(1, matchTypes, 4);
+    match.type = lcdMenu(1, "Standard,Driver,Prog,Rerun");
 
     wait1Msec(500);
     lcdClear();
@@ -101,16 +98,16 @@ void robotConfigure() {
         lcdClear();
     }
 
+
+    displayLCDCenteredString(0, "Pick Routine");
+
     // Menu Tree based on Match Type
     switch(match.type) {
-        displayLCDCenteredString(0, "Pick Routine");
         case 0:
-            String routines[2] = { "Mogo", "Block" };
-            match.routine = lcdMenu(1, routines, 2);
+            match.routine = lcdMenu(1, "Mogo");
             break;
         case 2:
-            String routines[1] = { "Standard" };
-            match.routine = lcdMenu(1, routines, 1);
+            match.routine = lcdMenu(1, "Standard");
             break;
         default: break;
     }

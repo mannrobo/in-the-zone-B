@@ -31,21 +31,15 @@
 
 #include "lib\rerun.c"
 #include "lib\hal.c"
+#include "lib\lcd.c"
 
 #include "routines\auton.c"
 #include "routines\skills.c"
 
 
-typedef struct {
-    int type; // 0 = standard, 1 = driver, 2 = programming, 3 = record rerun
-    int routine; // See /routines
-	  int alliance; // 0 = red, 1 = blue
-} matchState;
-matchState match;
-
 void pre_auton() {
   bStopTasksBetweenModes = false;
-  // robotConfigure();
+  robotConfigure();
   startTask(handleAll);
 }
 

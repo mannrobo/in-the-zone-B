@@ -4,6 +4,14 @@
 
 #include "util.c"
 
+typedef struct {
+    int type; // 0 = standard, 1 = driver, 2 = programming, 3 = record rerun
+    int routine; // See /routines
+	int alliance; // 0 = red, 1 = blue
+} matchState;
+
+matchState match;
+
 enum mogoState {
     UP, DOWN
 };
