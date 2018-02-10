@@ -24,10 +24,12 @@ int driveOffset() {
 }
 
 void driveHandle() {
-    motorTarget[port2] = robot.leftDrive;
-    motorTarget[port3] = robot.leftDrive;
+    motorTarget[port4] = robot.leftDrive;
+    motorTarget[port6] = robot.leftDrive;
+    motorTarget[port8] = robot.leftDrive;
 
-    motorTarget[port8] = robot.rightDrive;
+    motorTarget[port5] = robot.rightDrive;
+    motorTarget[port7] = robot.rightDrive;
     motorTarget[port9] = robot.rightDrive;
 }
 
@@ -52,8 +54,8 @@ void driveDistance(int inches) {
 
 /* Section 2: Mobile Goal Lift */
 void mogoSet(int value) {
-    motorTarget[port5] = value;
-    motorTarget[port6] = value;
+    motorTarget[port2] = value;
+    motorTarget[port3] = value;
 }
 
 void mogoHandle() {
