@@ -22,6 +22,8 @@ int lcdPick(int line, char * leftOption, char * rightOption) {
     string indicator = "*";
     string spacer = "  ";
 
+    clearLCDLine(line);
+
     while(nLCDButtons != 2) {
         string buffer = "";
         if (nLCDButtons == 1) choice = 0;
@@ -49,7 +51,9 @@ int lcdPick(int line, char * leftOption, char * rightOption) {
  **/
 int lcdMenu(int line, string * options, int size) {
 	int choice = 0;
-	int prev_choice;
+	int prev_choice = -1;
+
+    clearLCDLine(line);
 
 	while(true) {
 		if (nLCDButtons == kButtonLeft && choice > 0) {
@@ -70,10 +74,19 @@ int lcdMenu(int line, string * options, int size) {
 		}
 
 		prev_choice = choice;
-        wait1Msec(100);
+        wait1Msec(140);
 	}
 
     return choice;
+}
+
+void lcdStartup() {
+    bLCDBacklight = true;
+    lcdClear();
+
+    displayLCDCenteredString(0, "Fast  Boye");
+    displayLCDCenteredString(1, "3796B");
+    wait1Msec(1000);
 }
 
 /**
@@ -81,30 +94,17 @@ int lcdMenu(int line, string * options, int size) {
  * Run in pre_auton();
  **/
 void robotConfigure() {
-    lcdClear();
 
-    displayLCDCenteredString(0, "Lightning McQueen");
-    displayLCDCenteredString(1, "3796B");
-
-    wait1Msec(500);
-    lcdClear();
-
-    displayLCDCenteredString(0, "Match Type");
+    
     string matchTypes[] = { "Standard", "Driver", "Prog", "Rerun" };
     match.type = lcdMenu(1, matchTypes, 4);
 
     wait1Msec(500);
-    lcdClear();
 
     if (match.type == 0) {
-        displayLCDCenteredString(0, "Pick Alliance");
         match.alliance = lcdPick(1, "Red", "Blue");
         wait1Msec(500);
-        lcdClear();
-    }
-
-
-    displayLCDCenteredString(0, "Pick Routine");
+    }    
 
     // Menu Tree based on Match Type
     switch(match.type) {

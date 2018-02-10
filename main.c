@@ -40,8 +40,9 @@
 
 void pre_auton() {
   bStopTasksBetweenModes = false;
+  lcdStartup();
   robotConfigure();
-  startTask(handleAll);
+  // startTask(handleAll);
 }
 
 task autonomous() {
