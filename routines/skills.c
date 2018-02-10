@@ -7,6 +7,7 @@ void skillsFoward() {
     
 }
 
+string skillsRoutines[] = { "Forward" };
 void goSkills(int routine) {
     switch(routine) {
         default: case 0:
