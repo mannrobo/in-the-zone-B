@@ -47,11 +47,11 @@ int lcdPick(int line, char * leftOption, char * rightOption) {
  * @param string options The options to choose from, split by commas
  * @return int The index of the choosen option
  **/
-void lcdMenu(int line, string * options, int size) {
+int lcdMenu(int line, string * options, int size) {
 	int choice = 0;
+	int prev_choice;
 
-	int prev_choice = choice;
-	while(1) {
+	while(true) {
 		if (nLCDButtons == kButtonLeft && choice > 0) {
 			choice--;
 		}
@@ -64,13 +64,16 @@ void lcdMenu(int line, string * options, int size) {
 		string buffer = (string) options[choice];
 
 		if(prev_choice != choice) {
+			displayLCDCenteredString(line, buffer);
             displayLCDChar(line, 1, '<');
             displayLCDChar(line, 14, '>');
-			displayLCDCenteredString(line, buffer);
 		}
 
 		prev_choice = choice;
+        wait1Msec(100);
 	}
+
+    return choice;
 }
 
 /**
@@ -106,12 +109,10 @@ void robotConfigure() {
     // Menu Tree based on Match Type
     switch(match.type) {
         case 0:
-            string autons[] = { "Mogo", "Blcok" };
-            match.routine = lcdMenu(1, autons, 2);
+            match.routine = lcdMenu(1, autonRoutines, arraySize(autonRoutines));
             break;
         case 2:
-            string skillsRoutines[] = { "Standard" };
-            match.routine = lcdMenu(1, skillsRoutines, 1);
+            match.routine = lcdMenu(1, skillsRoutines, arraySize(skillsRoutines));
             break;
         default: break;
     }
