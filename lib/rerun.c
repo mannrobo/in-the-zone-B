@@ -29,12 +29,15 @@ robotState robot;
  * Update robot state based on controller values
  */
 void updateState() {
-    if (vexRT[Btn6U]) robot.mogo = UP;
-    if (vexRT[Btn6D]) robot.mogo = DOWN;
+    if (vexRT[Btn6U] || nLCDButtons == kButtonLeft) robot.mogo = UP;
+    if (vexRT[Btn6D] || nLCDButtons == kButtonRight) robot.mogo = DOWN;
+
+    int forward = abs(vexRT[Ch3]) > 25 ? vexRT[Ch3] : 0;
+    int turn = abs(vexRT[Ch4]) > 25 ? vexRT[Ch4] : 0;
 
     // Ch3 is direction, Ch4 is turn
-    robot.leftDrive = clamp(vexRT[Ch3] + vexRT[Ch4], -127, 127);
-    robot.rightDrive = clamp(vexRT[Ch3] - vexRT[Ch4], -127, 127);
+    robot.leftDrive = clamp(forward, -127, 127);
+    robot.rightDrive = clamp(forward, -127, 127);
 }
 
 /**
@@ -49,6 +52,7 @@ void updateState() {
 void outputStateCode() {
     string out;
     sprintf(out, "%d:%d:%d", robot.mogo == UP ? 0 : 1, robot.leftDrive, robot.rightDrive);
+    displayLCDString(1, 0, out);
 }
 
 void activateStateCode(char * code) {
