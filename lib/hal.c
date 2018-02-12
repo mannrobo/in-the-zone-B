@@ -7,6 +7,7 @@
 #include "motor.c"
 #include "util.c"
 #include "pid.c"
+#include "profile.c"
 
 /* Section 1: Drive */
 void drive(int left, int right) {
@@ -24,9 +25,9 @@ int driveOffset() {
 }
 
 void driveHandle() {
-    motorTarget[port4] = robot.leftDrive;
-    motorTarget[port6] = robot.leftDrive;
-    motorTarget[port8] = robot.leftDrive;
+    motorTarget[port4] = -robot.leftDrive;
+    motorTarget[port6] = -robot.leftDrive;
+    motorTarget[port8] = -robot.leftDrive;
 
     motorTarget[port5] = robot.rightDrive;
     motorTarget[port7] = robot.rightDrive;
@@ -44,8 +45,9 @@ void driveDistance(int inches) {
     int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE);
 
     while(SensorValue[leftDrive] != targetTicks || SensorValue[rightDrive] != targetTicks) {
-        int syncspeed = pidCalculate(drivePID, driveOffset());
-        drive(80 - syncspeed, 80 + syncspeed);
+        int syncspeed = pidCalculate(drivePID, driveOffset()),
+            basespeed = 90 * profileTrapezoid(targetTicks, SensorValue[leftDrive], 1/8); 
+        drive(basespeed - syncspeed, basespeed + syncspeed);
     }
 
     // Stop the drive after we've completed the distance
@@ -59,9 +61,9 @@ void mogoSet(int value) {
 }
 
 void mogoHandle() {
-    if(robot.mogo == UP && SensorValue[mogoLift] > 1500) {
+    if(robot.mogo == UP && SensorValue[mogoLeft] > 150) {
         mogoSet(127);
-    } else if (robot.mogo == DOWN && SensorValue[mogoLift] < 3000) {
+    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 2400) {
         mogoSet(-127);
     } else {
         mogoSet(0);

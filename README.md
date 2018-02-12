@@ -11,9 +11,10 @@ Features
         - [x] Pick
         - [ ] Menu
         - [ ] Live updating debug frame
-- PID:
+- Motion Control:
     - [x] Simple PID Library Functions
     - [x] PID Integration into Hardware Abstraction Layer
+    - [x] Motion Profiling
 - Smart Motors:
     - [x] Slew Rate
     - [x] Truespeed
