@@ -8,8 +8,6 @@ void lcdClear() {
     clearLCDLine(1);
 }
 
-
-
 /**
  * UI Component: Pick between two options, using left and right buttons to choose, and center to confirm
  * @param char * leftOption The option to display on the left
