@@ -46,6 +46,7 @@ void pre_auton() {
 }
 
 task autonomous() {
+  driveReset();
   startTask(handleAll);
   if (match.type == 0) {
     goAuton(match.routine);
@@ -58,6 +59,7 @@ task autonomous() {
 string lineOne;
 string lineTwo;
 task usercontrol() {
+  driveReset();
   startTask(handleAll);
   while (true) {
 

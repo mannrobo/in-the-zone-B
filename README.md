@@ -9,8 +9,8 @@ Features
     - [ ] Autonomous Routine Selection
     - [ ] UI Components:
         - [x] Pick
-        - [ ] Menu
-        - [ ] Live updating debug frame
+        - [x] Menu
+        - [ ] Custom Debug Menu (in usercontrol)
 - Motion Control:
     - [x] Simple PID Library Functions
     - [x] PID Integration into Hardware Abstraction Layer
