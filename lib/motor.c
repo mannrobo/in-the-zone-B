@@ -2,13 +2,12 @@
  * motor.c - Improved motor control including slew rate, truespeed, deadband, and motor groups. Includes PID control for motors as well
  */
 
-#include "util.c"
 
 // Stores motor targets, use this instead of motor[]
 int motorTarget[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int motorSlew[10] = { 10, 50, 50, 10, 10, 10, 10, 50, 50, 10 };
 int motorSlewLastSet[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int motorDeadband[10] = { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 };
+int motorDeadband[10] = { 40, 40, 15, 15, 15, 15, 15, 15, 15, 15 };
 
 // Thanks to Jess from 21S (@Unionjackz) for truespeed tables
 static const char L298[128] = {
@@ -52,7 +51,12 @@ void motorHandle() {
         // 1. Target
         outs[i] = clamp(motorTarget[i], -127, 127);
 
-        // 2. Slew Rate - Gradually increases motor power, reducing the chance of PTC trips
+        // 2. Deadband
+        if (motorDeadband[i] > abs(outs[i])) {
+            outs[i] = 0;
+        }
+
+        // 3. Slew Rate - Gradually increases motor power, reducing the chance of PTC trips
         motorCurrent = motorSlewLastSet[i];
         if(motorCurrent != outs[i]) {
             motorCurrent +=
@@ -60,20 +64,19 @@ void motorHandle() {
             clamp(motorSlew[i], 0, abs(outs[i] - motorCurrent)); // The amount to increase, the clamp prevents the value from being greater than the difference remaining
         }
 
-        outs[i] = motorCurrent;
-        motorSlewLastSet[i] = outs[i];
+        if (!robot.driveDirect) {
+            outs[i] = motorCurrent;
+            motorSlewLastSet[i] = outs[i];
+        }
 
-        // 3. TrueSpeed - Standardizes the acceleration curve of the Motor Controller
+        // 4. TrueSpeed - Standardizes the acceleration curve of the Motor Controller
         if(i == 0 || i == 9) {
             outs[i] = sgn(outs[i]) * L298[abs(outs[i])];
         } else {
             outs[i] = sgn(outs[i]) * MC29[abs(outs[i])];
         }
 
-        // 4. Deadband
-        if (motorDeadband[i] > abs(outs[i])) {
-            outs[i] = 0;
-        }
+        writeDebugStreamLine("port%d: %d", i, outs[i]);
 
         // 5. Set Motor
         motor[i] = outs[i];
