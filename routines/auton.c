@@ -3,7 +3,9 @@
  */
 
 void autonMogo() {
-
+    mogoDown();
+    untilMogoDone();
+    driveDistance(1500);
 }
 
 void autonBlock() {
