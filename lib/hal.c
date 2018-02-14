@@ -5,9 +5,10 @@
 
 // Slight crinkle in HAL philosophy, in case where more advanced motor algorithmns are being applied
 #include "motor.c"
-#include "util.c"
 #include "pid.c"
 #include "profile.c"
+
+#pragma systemFile
 
 /* Section 1: Drive */
 void drive(int left, int right) {
@@ -41,17 +42,26 @@ pidConfiguration drivePID;
 void driveDistance(int inches) {
     pidConfigure(drivePID, 0, 0, 0);
     pidReset(drivePID);
+    robot.driveDirect = true;
 
-    int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE);
+    // Test: Just letting it drift for 800 ticks is pretty accurate
+    int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE) - 800;
+    int startTicks  = SensorValue[leftDrive];
+    writeDebugStreamLine("driveDistance: %d %d", targetTicks, startTicks);
 
-    while(SensorValue[leftDrive] != targetTicks || SensorValue[rightDrive] != targetTicks) {
+    while(targetTicks - SensorValue[leftDrive] > 50) {
+        float mult = profileTrapezoid(startTicks, targetTicks, SensorValue[leftDrive], 0.3);
         int syncspeed = pidCalculate(drivePID, driveOffset()),
-            basespeed = 90 * profileTrapezoid(targetTicks, SensorValue[leftDrive], 1/8); 
+            basespeed = 127
+        writeDebugStreamLine("%d:%d", basespeed, syncspeed);
+
         drive(basespeed - syncspeed, basespeed + syncspeed);
+        wait1Msec(20);
     }
 
     // Stop the drive after we've completed the distance
     drive(0, 0);
+    robot.driveDirect = false;
 }
 
 /* Section 2: Mobile Goal Lift */
@@ -61,12 +71,15 @@ void mogoSet(int value) {
 }
 
 void mogoHandle() {
-    if(robot.mogo == UP && SensorValue[mogoLeft] > 150) {
+    if(robot.mogo == UP && SensorValue[mogoLeft] > 400) {
         mogoSet(127);
-    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 2400) {
+        robot.mogoMoving = true;
+    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 3000) {
         mogoSet(-127);
+        robot.mogoMoving = true;
     } else {
         mogoSet(0);
+        robot.mogoMoving = false;
     }
 }
 
@@ -77,6 +90,10 @@ void mogoDown() {
     robot.mogo = DOWN;
 }
 
+void untilMogoDone() {
+    while(robot.mogoMoving) {};
+    return;
+}
 
 task handleAll() {
     while(true) {
