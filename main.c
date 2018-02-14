@@ -1,3 +1,4 @@
+#pragma config(Sensor, in1,    powerExpander,  sensorNone)
 #pragma config(Sensor, in2,    mogoLeft,       sensorPotentiometer)
 #pragma config(Sensor, in3,    mogoRight,      sensorPotentiometer)
 #pragma config(Sensor, dgtl3,  leftDrive,      sensorQuadEncoder)
@@ -32,11 +33,12 @@
 #pragma competitionControl(Competition)
 #include "Vex_Competition_Includes.c"
 
+#include "lib\util.c"
+#include "lib\rerun.c"
+#include "lib\hal.c"
 #include "routines\auton.c"
 #include "routines\skills.c"
 
-#include "lib\rerun.c"
-#include "lib\hal.c"
 #include "lib\lcd.c"
 
 void pre_auton() {
@@ -56,11 +58,30 @@ task autonomous() {
 }
 
 
-string lineOne;
-string lineTwo;
+task debugValues() {
+    while(true) {
+    	lcdClear();
+    	string out;
+
+    	sprintf(out, "%d:%d", SensorValue[leftDrive], SensorValue[rightDrive]);
+    	displayLCDString(0, 0, out);
+
+
+      float multiplier = profileJerk(0, 1500, SensorValue[leftDrive], 0.3);
+
+    	string out2;
+    	sprintf(out2, "%d=>%f", SensorValue[leftDrive], multiplier);
+    	displayLCDString(1, 0, out2);
+    	wait1Msec(60);
+    }
+}
+
+
 task usercontrol() {
   driveReset();
   startTask(handleAll);
+  startTask(debugValues);
+
   while (true) {
 
     updateState();
@@ -68,14 +89,6 @@ task usercontrol() {
     if (match.type == 3) {
       outputStateCode();
     }
-
-    lcdClear();
-    displayLCDString(0, 0, "Mogo: ");
-    sprintf(lineOne, "%d (%d)", SensorValue[mogoLeft], motorTarget[port2]); //Build the value to be displayed
-    displayNextLCDString(lineOne);
-
-    outputStateCode();
-
     wait1Msec(20);
   }
 }
