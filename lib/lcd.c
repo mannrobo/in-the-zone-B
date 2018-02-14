@@ -40,7 +40,6 @@ int lcdPick(int line, char * leftOption, char * rightOption) {
 
 }
 
-
 /**
  * UI Component: Pick between multiple options
  * @param int line The line to display on
