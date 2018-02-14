@@ -3,6 +3,7 @@
  */
 
 #include "util.c"
+#pragma systemFile
 
 typedef struct {
     int type; // 0 = standard, 1 = driver, 2 = programming, 3 = record rerun
@@ -20,6 +21,10 @@ typedef struct robotState {
     mogoState mogo;
     int leftDrive;
     int rightDrive;
+    bool driveDirect; // In autonomous, we would likely want to forgo slew rate, motion profiling will take care of its role
+
+    bool mogoMoving;
+    bool driveMoving;
 } robotState;
 
 robotState robot;
@@ -29,15 +34,16 @@ robotState robot;
  * Update robot state based on controller values
  */
 void updateState() {
-    if (vexRT[Btn6U] || nLCDButtons == kButtonLeft) robot.mogo = UP;
-    if (vexRT[Btn6D] || nLCDButtons == kButtonRight) robot.mogo = DOWN;
+    if (vexRT[Btn6U] || nLCDButtons == kButtonLeft || vexRT[Btn5U]) robot.mogo = UP;
+    if (vexRT[Btn6D] || nLCDButtons == kButtonRight || vexRT[Btn5D]) robot.mogo = DOWN;
 
-    int forward = abs(vexRT[Ch3]) > 25 ? vexRT[Ch3] : 0;
-    int turn = abs(vexRT[Ch4]) > 25 ? vexRT[Ch4] : 0;
+    int forward = abs(vexRT[Ch3]) > 25 ? vexRT[Ch3] : 0,
+        turn = abs(vexRT[Ch4]) > 30 ? vexRT[Ch4] * 0.65 : 0,
+        left = forward + turn,
+        right = forward - turn;
 
-    // Ch3 is direction, Ch4 is turn
-    robot.leftDrive = clamp(forward, -127, 127);
-    robot.rightDrive = clamp(forward, -127, 127);
+    robot.leftDrive  = sgn(left)  * rescaleTo(127, abs(left), abs(right), 0);
+    robot.rightDrive = sgn(right) * rescaleTo(127, abs(left), abs(right), 1);
 }
 
 /**
