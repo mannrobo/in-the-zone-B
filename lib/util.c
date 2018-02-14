@@ -49,6 +49,22 @@ int encoderDirect(int lastValue, int measuredValue, int pwm) {
   return lastValue + sgn(pwm) * (measuredValue - lastValue);
 }
 
+/**
+ * Rescales two values to a specified maximum and returns the specified value
+ * @param int max The maximum value, used to calculate the scalar
+ * @param int alpha The first value to rescale
+ * @param int beta The second value to rescale
+ * @param int side The value to return, 0 for alpha, 1 for beta
+ **/
+int rescaleTo(int max, int alpha, int beta, int side) {
+  if (alpha <= max && beta <= max) return side ? beta : alpha; // If no sclaing is needed, return
+  
+  float scalar = alpha > beta ? (float) max / (float) alpha : (float) max / (float) beta;
+  return (int)(side ? beta * scalar : alpha * scalar);
+}
+
+
+
 #define TURBO 2.4
 #define HIGHSPEED 1.6
 #define TORQUE 1
