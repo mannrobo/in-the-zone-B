@@ -28,7 +28,7 @@ float debugPosition;
 float profileTrapezoid(int startTicks, int targetTicks, int currentTicks, float dvPeriod = 1.0/3.0) {
     float position = profileProgress(startTicks, currentTicks, targetTicks);
     int accelerateUntil = (targetTicks * dvPeriod);
-    int decelerateAt = targetTicks - (targetTicks * dvPeriod)
+    int decelerateAt = targetTicks - (targetTicks * dvPeriod);
 
     // Acceleration Period: For dvPeriod of the motion
     if (currentTicks <= accelerateUntil) {
@@ -55,7 +55,7 @@ float profileTrapezoid(int startTicks, int targetTicks, int currentTicks, float 
  **/
 float profileJerk(int startTicks, int targetTicks, int currentTicks, float dvPeriod = 1.0/2.0) {
     float position = profileProgress(startTicks, currentTicks, targetTicks);
-    int decelerateAt = targetTicks - 0.5 * (targetTicks * dvPeriod)
+    int decelerateAt = targetTicks - 0.5 * (targetTicks * dvPeriod);
 
     // Regular Period
     if (currentTicks <= decelerateAt) {
