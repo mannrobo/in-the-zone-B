@@ -38,31 +38,50 @@ void driveHandle() {
 /**
  * Drives a set number of specified inches
  */
-pidConfiguration drivePID;
 void driveDistance(int inches) {
-    pidConfigure(drivePID, 0, 0, 0);
-    pidReset(drivePID);
     robot.driveDirect = true;
+    driveReset();
 
-    // Test: Just letting it drift for 800 ticks is pretty accurate
-    int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE) - 800;
+    // Calculate the movement
+    int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE);
+    int deceleratePeriod = clamp(targetTicks / 2, 0, 800);
+    targetTicks -= deceleratePeriod;
     int startTicks  = SensorValue[leftDrive];
     writeDebugStreamLine("driveDistance: %d %d", targetTicks, startTicks);
 
     while(targetTicks - SensorValue[leftDrive] > 50) {
-        float mult = profileTrapezoid(startTicks, targetTicks, SensorValue[leftDrive], 0.3);
-        int syncspeed = pidCalculate(drivePID, driveOffset()),
-            basespeed = 127
-        writeDebugStreamLine("%d:%d", basespeed, syncspeed);
-
-        drive(basespeed - syncspeed, basespeed + syncspeed);
-        wait1Msec(20);
+        drive(127, 127);
     }
 
     // Stop the drive after we've completed the distance
     drive(0, 0);
     robot.driveDirect = false;
 }
+
+/**
+ * Turns a set number of degrees
+ */
+
+int rotationTicks() {
+    return sgn(SensorValue[leftDrive]) * (abs(SensorValue[leftDrive]) + abs(SensorValue[rightDrive])) / 2;
+}
+
+/**
+ * Turns a specified number of rotations
+ * float rotations The number of rotations to turn
+ **/
+void turn(float rotations) {
+    driveReset();
+    int targetTicks = 440 * rotations;
+    writeDebugStreamLine("turn: %d %d", targetTicks, rotationTicks());
+    while (abs(rotationTicks()) < abs(targetTicks)) {
+        float factors = sgn(rotations) * profileTrapezoid(0, targetTicks, rotationTicks());
+        drive(30 * factors + 30, -30 * factors - 30);
+    }
+    drive(0, 0);
+}
+
+
 
 /* Section 2: Mobile Goal Lift */
 void mogoSet(int value) {
@@ -71,10 +90,10 @@ void mogoSet(int value) {
 }
 
 void mogoHandle() {
-    if(robot.mogo == UP && SensorValue[mogoLeft] > 400) {
+    if(robot.mogo == UP && SensorValue[mogoLeft] > 600) {
         mogoSet(127);
         robot.mogoMoving = true;
-    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 3000) {
+    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 2200) {
         mogoSet(-127);
         robot.mogoMoving = true;
     } else {
