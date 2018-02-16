@@ -5,7 +5,7 @@
 
 // Stores motor targets, use this instead of motor[]
 int motorTarget[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int motorSlew[10] = { 10, 50, 50, 10, 10, 10, 10, 50, 50, 10 };
+int motorSlew[10] = { 10, 10, 10, 25, 25, 25, 25, 25, 25, 10 };
 int motorSlewLastSet[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int motorDeadband[10] = { 40, 40, 15, 15, 15, 15, 15, 15, 15, 15 };
 
@@ -63,20 +63,18 @@ void motorHandle() {
             sgn(outs[i] - motorCurrent) * // Whether to increase or decrease in value
             clamp(motorSlew[i], 0, abs(outs[i] - motorCurrent)); // The amount to increase, the clamp prevents the value from being greater than the difference remaining
         }
-
-        if (!robot.driveDirect) {
-            outs[i] = motorCurrent;
-            motorSlewLastSet[i] = outs[i];
-        }
+        
+        outs[i] = motorCurrent;
+        motorSlewLastSet[i] = outs[i];
 
         // 4. TrueSpeed - Standardizes the acceleration curve of the Motor Controller
         if(i == 0 || i == 9) {
-            outs[i] = sgn(outs[i]) * L298[abs(outs[i])];
+            // outs[i] = sgn(outs[i]) * L298[abs(outs[i])];
         } else {
-            outs[i] = sgn(outs[i]) * MC29[abs(outs[i])];
+            // outs[i] = sgn(outs[i]) * MC29[abs(outs[i])];
         }
 
-        writeDebugStreamLine("port%d: %d", i, outs[i]);
+        // writeDebugStreamLine("port%d: %d", i, outs[i]);
 
         // 5. Set Motor
         motor[i] = outs[i];
