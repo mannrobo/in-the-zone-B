@@ -7,10 +7,10 @@ Features
 - LCD Library
     - [x] Simple Helpers
     - [ ] Autonomous Routine Selection
-    - [ ] UI Components:
+    - [x] UI Components:
         - [x] Pick
         - [x] Menu
-        - [ ] Custom Debug Menu (in usercontrol)
+        - [x] Custom Debug Menu (with multiple, live, configurable screens)
 - Motion Control:
     - [x] Simple PID Library Functions
     - [x] PID Integration into Hardware Abstraction Layer

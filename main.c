@@ -36,20 +36,25 @@
 #include "lib\util.c"
 #include "lib\rerun.c"
 #include "lib\hal.c"
+
 #include "routines\auton.c"
 #include "routines\skills.c"
 
 #include "lib\lcd.c"
 
 void pre_auton() {
-  bStopTasksBetweenModes = true;
+  bStopTasksBetweenModes = false;
+  bDisplayCompetitionStatusOnLcd = false;
+  startTask(handleAll);
   lcdStartup();
   robotConfigure();
+  startTask(lcdDebug);
 }
 
+
 task autonomous() {
+  writeDebugStreamLine("autonomous()");
   driveReset();
-  startTask(handleAll);
   if (match.type == 0) {
     goAuton(match.routine);
   } else if (match.type == 2) {
@@ -58,30 +63,10 @@ task autonomous() {
 }
 
 
-task debugValues() {
-    while(true) {
-    	lcdClear();
-    	string out;
-
-    	sprintf(out, "%d:%d", SensorValue[leftDrive], SensorValue[rightDrive]);
-    	displayLCDString(0, 0, out);
-
-
-      float multiplier = profileJerk(0, 1500, SensorValue[leftDrive], 0.3);
-
-    	string out2;
-    	sprintf(out2, "%d=>%f", SensorValue[leftDrive], multiplier);
-    	displayLCDString(1, 0, out2);
-    	wait1Msec(60);
-    }
-}
-
 
 task usercontrol() {
+  writeDebugStreamLine("usercontrol()");
   driveReset();
-  startTask(handleAll);
-  startTask(debugValues);
-
   while (true) {
 
     updateState();

@@ -79,7 +79,7 @@ int lcdMenu(int line, string * options, int size) {
 
 
 void lcdStartup() {
-	  bLCDBacklight = true;
+	bLCDBacklight = true;
     lcdClear();
 
     displayLCDCenteredString(0, "Fast  Boye");
@@ -87,6 +87,27 @@ void lcdStartup() {
     wait1Msec(1000);
 
     lcdClear();
+}
+
+task lcdDebug() {
+    while(true) {
+        lcdClear();
+        string out;
+        string out2;
+        switch(robot.debugDisplay) {
+            case 0:
+                sprintf(out, "%1.2fV %1.2fV", nImmediateBatteryLevel/1000.0, SensorValue[powerExpander]/270.);
+                sprintf(out2, "%1.2fV", BackupBatteryLevel/1000.0);
+                break;
+            case 1:
+                sprintf(out, "%d:%d", SensorValue[leftDrive], SensorValue[rightDrive]);
+                sprintf(out2, "%d", rotationTicks());
+                break;
+        }
+        displayLCDString(0, 0, out);
+        displayLCDString(1, 0, out2);
+        wait1Msec(20);
+    }
 }
 
 /**
@@ -119,5 +140,7 @@ void robotConfigure() {
         default: break;
     }
 
+    lcdClear();
+    
 
 }
