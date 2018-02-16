@@ -2,6 +2,8 @@
  * pid.c - Super basic PID Fundamentals Library
  */
 
+#pragma systemFile
+
 typedef struct {
 
     // Configuration Variables
