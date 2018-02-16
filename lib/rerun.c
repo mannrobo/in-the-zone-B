@@ -25,6 +25,8 @@ typedef struct robotState {
 
     bool mogoMoving;
     bool driveMoving;
+
+    int debugDisplay; // Refer to debugValues() task for more information
 } robotState;
 
 robotState robot;
@@ -38,7 +40,7 @@ void updateState() {
     if (vexRT[Btn6D] || nLCDButtons == kButtonRight || vexRT[Btn5D]) robot.mogo = DOWN;
 
     int forward = abs(vexRT[Ch3]) > 25 ? vexRT[Ch3] : 0,
-        turn = abs(vexRT[Ch4]) > 30 ? vexRT[Ch4] * 0.65 : 0,
+        turn = abs(vexRT[Ch4]) > 60 ? vexRT[Ch4] * 0.8 : 0,
         left = forward + turn,
         right = forward - turn;
 
