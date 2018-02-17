@@ -43,7 +43,7 @@ void driveDistance(int inches) {
     driveReset();
 
     // Calculate the movement
-    int targetTicks = inchesToTicks(inches, 3.25, 3, TORQUE);
+    int targetTicks = inches;
     int deceleratePeriod = clamp(targetTicks / 2, 0, 800);
     targetTicks -= deceleratePeriod;
     int startTicks  = SensorValue[leftDrive];
@@ -93,7 +93,7 @@ void mogoHandle() {
     if(robot.mogo == UP && SensorValue[mogoLeft] > 600) {
         mogoSet(127);
         robot.mogoMoving = true;
-    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 2200) {
+    } else if (robot.mogo == DOWN && SensorValue[mogoLeft] < 2450) {
         mogoSet(-127);
         robot.mogoMoving = true;
     } else {
@@ -102,16 +102,21 @@ void mogoHandle() {
     }
 }
 
-void mogoUp() {
-    robot.mogo = UP;
-}
-void mogoDown() {
-    robot.mogo = DOWN;
-}
-
 void untilMogoDone() {
     while(robot.mogoMoving) {};
     return;
+}
+
+
+void mogoUp() {
+    robot.mogo = UP;
+    robot.mogoMoving = true;
+    untilMogoDone();
+}
+void mogoDown() {
+    robot.mogo = DOWN;
+    robot.mogoMoving = true;
+    untilMogoDone();
 }
 
 task handleAll() {
