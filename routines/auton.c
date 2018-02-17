@@ -4,8 +4,7 @@
 
 void autonMogo() {
     mogoDown();
-    untilMogoDone();
-    driveDistance(1500);
+    writeDebugStreamLine("Hello");
 }
 
 void autonBlock() {

@@ -4,7 +4,7 @@
 
 
 void skillsFoward() {
-    driveDistance(4000);
+    drive(127, 127);
 }
 
 string skillsRoutines[] = { "Forward" };
