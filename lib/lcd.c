@@ -141,6 +141,6 @@ void robotConfigure() {
     }
 
     lcdClear();
-    
+    robot.debugDisplay = 0;
 
 }
