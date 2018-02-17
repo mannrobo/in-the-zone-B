@@ -55,6 +55,7 @@ void pre_auton() {
 task autonomous() {
   writeDebugStreamLine("autonomous()");
   driveReset();
+  stopTask(usercontrol);
   if (match.type == 0) {
     goAuton(match.routine);
   } else if (match.type == 2) {
@@ -67,6 +68,7 @@ task autonomous() {
 task usercontrol() {
   writeDebugStreamLine("usercontrol()");
   driveReset();
+  stopTask(autonomous);
   while (true) {
 
     updateState();
