@@ -39,8 +39,8 @@ void updateState() {
     if (vexRT[Btn6U] || nLCDButtons == kButtonLeft || vexRT[Btn5U]) robot.mogo = UP;
     if (vexRT[Btn6D] || nLCDButtons == kButtonRight || vexRT[Btn5D]) robot.mogo = DOWN;
 
-    int forward = abs(vexRT[Ch3]) > 25 ? vexRT[Ch3] : 0,
-        turn = abs(vexRT[Ch4]) > 60 ? vexRT[Ch4] * 0.8 : 0,
+    int forward = abs(vexRT[Ch3]) > 60 ? vexRT[Ch3] * 0.8 : 0,
+        turn = abs(vexRT[Ch4]) > 90 ? vexRT[Ch4] * 0.4 : 0,
         left = forward + turn,
         right = forward - turn;
 
