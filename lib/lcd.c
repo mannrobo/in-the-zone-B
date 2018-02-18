@@ -91,21 +91,35 @@ void lcdStartup() {
 
 task lcdDebug() {
     while(true) {
+        if (nLCDButtons == kButtonLeft && robot.debugDisplay > 0) robot.debugDisplay--;
+        if (nLCDButtons == kButtonRight) robot.debugDisplay++;
+
         lcdClear();
-        string out;
-        string out2;
+        string lineOne;
+        string lineTwo;
+
         switch(robot.debugDisplay) {
+            // Specialized displays for specific situations, not useful in general debug mode
+            case -1: // Rerun
+                sprintf(lineOne, "%d", time1[T1])
+                sprintf(lineTwo, "%s", rerunAction);
+
+            // Normal access displays
             case 0:
-                sprintf(out, "%1.2fV %1.2fV", nImmediateBatteryLevel/1000.0, SensorValue[powerExpander]/270.);
-                sprintf(out2, "%1.2fV", BackupBatteryLevel/1000.0);
+                sprintf(lineOne, "%1.2fV %1.2fV", nImmediateBatteryLevel/1000.0, SensorValue[powerExpander]/270.0);
+                sprintf(lineTwo, "%1.2fV", BackupBatteryLevel/1000.0);
                 break;
             case 1:
-                sprintf(out, "%d:%d", SensorValue[leftDrive], SensorValue[rightDrive]);
-                sprintf(out2, "%d", rotationTicks());
+                sprintf(lineOne, "%d:%d", SensorValue[leftDrive], SensorValue[rightDrive]);
+                sprintf(lineTwo, "%d", rotationTicks());
                 break;
+            default:
+                sprintf(lineOne, "Slot %d", robot.debugDisplay);
+
         }
-        displayLCDString(0, 0, out);
-        displayLCDString(1, 0, out2);
+
+        displayLCDString(0, 0, lineOne);
+        displayLCDString(1, 0, lineTwo);
         wait1Msec(20);
     }
 }

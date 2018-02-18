@@ -47,7 +47,6 @@ void driveDistance(int inches) {
     int deceleratePeriod = clamp(targetTicks / 2, 0, 800);
     targetTicks -= deceleratePeriod;
     int startTicks  = SensorValue[leftDrive];
-    writeDebugStreamLine("driveDistance: %d %d", targetTicks, startTicks);
 
     while(targetTicks - SensorValue[leftDrive] > 50) {
         drive(127, 127);
@@ -73,10 +72,11 @@ int rotationTicks() {
 void turn(float rotations) {
     driveReset();
     int targetTicks = 440 * rotations;
-    writeDebugStreamLine("turn: %d %d", targetTicks, rotationTicks());
+    int out;
+
     while (abs(rotationTicks()) < abs(targetTicks)) {
-        float factors = sgn(rotations) * profileTrapezoid(0, targetTicks, rotationTicks());
-        drive(30 * factors + 30, -30 * factors - 30);
+        out = profile(PROFILE_TRAPEZOID, 30, 60, 0, targetTicks, rotationTicks());
+        drive(out, -out);
     }
     drive(0, 0);
 }

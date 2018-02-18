@@ -45,9 +45,12 @@
 void pre_auton() {
   bStopTasksBetweenModes = false;
   bDisplayCompetitionStatusOnLcd = false;
+
   startTask(handleAll);
+  
   lcdStartup();
   robotConfigure();
+
   startTask(lcdDebug);
 }
 
@@ -66,16 +69,31 @@ task autonomous() {
 
 
 task usercontrol() {
+
   writeDebugStreamLine("usercontrol()");
   driveReset();
   stopTask(autonomous);
+  ClearTimer(T1); // Used for rerun
+
   while (true) {
 
-    updateState();
+    // Mogo Lift
+    if (vexRT[Btn6U] || vexRT[Btn5U]) robot.mogo = UP;
+    if (vexRT[Btn6D] || vexRT[Btn5D]) robot.mogo = DOWN;
+
+    // Drive
+    int forward = abs(vexRT[Ch3]) > 60 ? vexRT[Ch3] * 0.8 : 0,
+        turn = abs(vexRT[Ch4]) > 90 ? vexRT[Ch4] * 0.4 : 0,
+        left = forward + turn,
+        right = forward - turn;
+
+    robot.leftDrive  = sgn(left)  * rescaleTo(127, abs(left), abs(right), 0);
+    robot.rightDrive = sgn(right) * rescaleTo(127, abs(left), abs(right), 1);
 
     if (match.type == 3) {
-      outputStateCode();
+      rerunHandle();
     }
-    wait1Msec(20);
+
+    wait1Msec(20); 
   }
 }

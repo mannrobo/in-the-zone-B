@@ -32,46 +32,53 @@ typedef struct robotState {
 robotState robot;
 
 
-/**
- * Update robot state based on controller values
- */
-void updateState() {
-    if (vexRT[Btn6U] || nLCDButtons == kButtonLeft || vexRT[Btn5U]) robot.mogo = UP;
-    if (vexRT[Btn6D] || nLCDButtons == kButtonRight || vexRT[Btn5D]) robot.mogo = DOWN;
 
-    int forward = abs(vexRT[Ch3]) > 60 ? vexRT[Ch3] * 0.8 : 0,
-        turn = abs(vexRT[Ch4]) > 90 ? vexRT[Ch4] * 0.4 : 0,
-        left = forward + turn,
-        right = forward - turn;
+mogoState lastMogoState;
+string rerunAction;
 
-    robot.leftDrive  = sgn(left)  * rescaleTo(127, abs(left), abs(right), 0);
-    robot.rightDrive = sgn(right) * rescaleTo(127, abs(left), abs(right), 1);
+void rerunReset() {
+    ClearTimer(T1);
+    lastMogoState = robot.mogoState;
+    driveReset();
+    rerunAction = "NONE";
 }
 
 /**
- * State Codes
- * Short, textual representations of the robot's state. They take the form:
- * <mogoLift>:<leftDrive>:<rightDrive>
- * Examples:
- *   0:127:-127
- *   0:0:0
- */
-
-void outputStateCode() {
-    string out;
-    sprintf(out, "%d:%d:%d", robot.mogo == UP ? 0 : 1, robot.leftDrive, robot.rightDrive);
-    displayLCDString(1, 0, out);
-}
-
-void activateStateCode(char * code) {
-    char state[STRTOK_MAX_TOKEN_SIZE];
-    char * ptr = &state;
-    char * sep = ":";
-    while (true) {
-        if (!strtok(code, ptr, sep)) break;
+ * Because purely time based rerun is quite unreliable, 
+ * this rerun system is based off of setting instructions
+ * via the robot. It's basically a faster way of writing
+ * autonomous functions. Ideally, the output of the rerun 
+ * would be code we can copy paste into routines/ whole-cloth
+ * 
+ * There are four different actions the robot can take in autonomous:
+ *  - Drive (straight or slightly arced)
+ *  - Turn
+ *  - Mobile Goal Up/Down
+ *  - Wait
+ * 
+ * Because the set is so simple (and rarely would we want to do any of those for a specific length of time) the
+ * easiest/most accurate rerun system would be one that has the driver perform the action, and then 
+ * press a button to indicate the action is complete, performing one action at a time through the routine.
+ **/
+void rerunHandle() {
+    robot.debugDisplay = -1;
+    if (vexRT[Btn7D]) {
+        // Display the changed action in the frame
+        if (lastMogoState != robot.mogoState) {
+            rerunAction = "MOGO";
+            writeDebugStreamLine("mogo%s();", robot.mogoState == UP ? "UP" : "DOWN");
+        } else if (abs(SensorValue[leftDrive]) > 200 && SensorValue[leftDrive] + SensorValue[rightDrive < 100]) { // Turning
+            rerunAction = "TURN";
+            writeDebugStreamLine("// Turn")
+        } else if (abs(SensorValue[leftDrive]) > 200 && abs(SensorValue[rightDrive]) > 200) {
+            rerunAction = "DRIVE";
+            writeDebugStreamLine("driveDistance(%d, %d)", SensorValue[leftDrive], SensorValue[leftDrive]);
+        } else {
+            rerunAction = "WAIT";
+            writeDebugStreamLine("wait1MSec(%d)", time1[T1])
+        }
+        rerunReset();
+    } else if (vexRT[Btn7L]) { // Cancel the previous action
+        rerunReset();
     }
-    robot.mogo = state[0] == 0 ? UP : DOWN;
-    robot.leftDrive = (int) state[1];
-    robot.rightDrive = (int) state[2];
-
 }

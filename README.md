@@ -6,7 +6,7 @@ Features
 
 - LCD Library
     - [x] Simple Helpers
-    - [ ] Autonomous Routine Selection
+    - [x] Autonomous Routine Selection
     - [x] UI Components:
         - [x] Pick
         - [x] Menu
@@ -21,7 +21,7 @@ Features
     - [x] Deadband
 - Rerun:
     - [x] Record Reruns
-    - [ ] Integrate playback into autonomous and programming skills systems
+    - [x] Integrate playback into autonomous and programming skills systems
 
 
    
