@@ -78,8 +78,8 @@ task usercontrol() {
   while (true) {
 
     // Mogo Lift
-    if (vexRT[Btn6U] || nLCDButtons == kButtonLeft || vexRT[Btn5U]) robot.mogo = UP;
-    if (vexRT[Btn6D] || nLCDButtons == kButtonRight || vexRT[Btn5D]) robot.mogo = DOWN;
+    if (vexRT[Btn6U] || vexRT[Btn5U]) robot.mogo = UP;
+    if (vexRT[Btn6D] || vexRT[Btn5D]) robot.mogo = DOWN;
 
     // Drive
     int forward = abs(vexRT[Ch3]) > 60 ? vexRT[Ch3] * 0.8 : 0,
