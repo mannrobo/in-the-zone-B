@@ -20,8 +20,8 @@ Features
     - [x] Truespeed
     - [x] Deadband
 - Rerun:
-    - [x] Record Reruns
-    - [ ] Integrate playback into autonomous and programming skills systems
+    - [-] Record Reruns
+    - [x] Integrate playback into autonomous and programming skills systems
 
 
    
