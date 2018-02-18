@@ -2,6 +2,7 @@
  * motor.c - Improved motor control including slew rate, truespeed, deadband, and motor groups. Includes PID control for motors as well
  */
 
+#include "util.c"
 
 // Stores motor targets, use this instead of motor[]
 int motorTarget[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -63,7 +64,7 @@ void motorHandle() {
             sgn(outs[i] - motorCurrent) * // Whether to increase or decrease in value
             clamp(motorSlew[i], 0, abs(outs[i] - motorCurrent)); // The amount to increase, the clamp prevents the value from being greater than the difference remaining
         }
-        
+
         outs[i] = motorCurrent;
         motorSlewLastSet[i] = outs[i];
 
