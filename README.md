@@ -6,7 +6,7 @@ Features
 
 - LCD Library
     - [x] Simple Helpers
-    - [ ] Autonomous Routine Selection
+    - [x] Autonomous Routine Selection
     - [x] UI Components:
         - [x] Pick
         - [x] Menu
