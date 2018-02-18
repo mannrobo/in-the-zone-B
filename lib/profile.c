@@ -86,9 +86,9 @@ int profile(int profileType, int min, int max, int startTicks, int targetTicks, 
     float multipler;
     switch(profileType) {
         default: case PROFILE_TRAPEZOID:
-            multipler = profileTrapezoid(startTick, targetTicks, currentTicks, dvPeriod);
+            multipler = profileTrapezoid(startTicks, targetTicks, currentTicks, dvPeriod);
         case PROFILE_JERK:
-            multipler = profileJerk(startTick, targetTicks, currentTicks, dvPeriod);
+            multipler = profileJerk(startTicks, targetTicks, currentTicks, dvPeriod);
 
     }
     return (int)((max - min) * multipler + min);
