@@ -101,7 +101,7 @@ task lcdDebug() {
         switch(robot.debugDisplay) {
             // Specialized displays for specific situations, not useful in general debug mode
             case -1: // Rerun
-                sprintf(lineOne, "%d", time1[T1])
+                sprintf(lineOne, "%d", time1[T1]);
                 sprintf(lineTwo, "%s", rerunAction);
 
             // Normal access displays
@@ -120,7 +120,7 @@ task lcdDebug() {
 
         displayLCDString(0, 0, lineOne);
         displayLCDString(1, 0, lineTwo);
-        wait1Msec(20);
+        wait1Msec(140);
     }
 }
 
