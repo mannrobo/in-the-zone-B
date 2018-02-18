@@ -33,9 +33,10 @@
 #pragma competitionControl(Competition)
 #include "Vex_Competition_Includes.c"
 
+#include "lib\state.c"
 #include "lib\util.c"
-#include "lib\rerun.c"
 #include "lib\hal.c"
+#include "lib\rerun.c"
 
 #include "routines\auton.c"
 #include "routines\skills.c"
@@ -47,7 +48,7 @@ void pre_auton() {
   bDisplayCompetitionStatusOnLcd = false;
 
   startTask(handleAll);
-  
+
   lcdStartup();
   robotConfigure();
 
@@ -73,7 +74,7 @@ task usercontrol() {
   writeDebugStreamLine("usercontrol()");
   driveReset();
   stopTask(autonomous);
-  ClearTimer(T1); // Used for rerun
+  clearTimer(T1); // Used for rerun
 
   while (true) {
 
@@ -94,6 +95,6 @@ task usercontrol() {
       rerunHandle();
     }
 
-    wait1Msec(20); 
+    wait1Msec(20);
   }
 }
