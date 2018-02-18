@@ -34,12 +34,13 @@ robotState robot;
 
 
 mogoState lastMogoState;
-
+string rerunAction;
 
 void rerunReset() {
     ClearTimer(T1);
     lastMogoState = robot.mogoState;
     driveReset();
+    rerunAction = "NONE";
 }
 
 /**
@@ -60,16 +61,20 @@ void rerunReset() {
  * press a button to indicate the action is complete, performing one action at a time through the routine.
  **/
 void rerunHandle() {
+    robot.debugDisplay = -1;
     if (vexRT[Btn7D]) {
         // Display the changed action in the frame
-        if (lastMogoState != robot.mogoState) { // Mobile Goal Control
+        if (lastMogoState != robot.mogoState) {
+            rerunAction = "MOGO";
             writeDebugStreamLine("mogo%s();", robot.mogoState == UP ? "UP" : "DOWN");
         } else if (abs(SensorValue[leftDrive]) > 200 && SensorValue[leftDrive] + SensorValue[rightDrive < 100]) { // Turning
-            // Turning on hold until accurate turning has been programmed
+            rerunAction = "TURN";
+            writeDebugStreamLine("// Turn")
         } else if (abs(SensorValue[leftDrive]) > 200 && abs(SensorValue[rightDrive]) > 200) {
-            // Disabling arcing here because it will be more trouble than its worth. Reevaluate in the future
+            rerunAction = "DRIVE";
             writeDebugStreamLine("driveDistance(%d, %d)", SensorValue[leftDrive], SensorValue[leftDrive]);
         } else {
+            rerunAction = "WAIT";
             writeDebugStreamLine("wait1MSec(%d)", time1[T1])
         }
         rerunReset();
